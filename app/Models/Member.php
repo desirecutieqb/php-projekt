@@ -16,9 +16,14 @@ class Member extends Model
         'membership_date',
     ];
 
-    public function borrows()
+    public function reservations()
     {
-        return $this->hasMany(Borrow::class);
+        return $this->hasMany(Reservation::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
     }
 }
 

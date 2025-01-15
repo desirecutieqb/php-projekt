@@ -1,19 +1,38 @@
 <?php
-namespace Database\Seeders;
 use Illuminate\Database\Seeder;
-use App\Models\Book;
-use App\Models\Member;
-use App\Models\Borrow;
-use App\Models\BookBorrow;
+use Database\Seeders\BookSeeder;
+use Database\Seeders\MemberSeeder;
+use Database\Seeders\BorrowSeeder;
+use Database\Seeders\BookBorrowSeeder;
+use Database\Seeders\CategorySeeder;
+use Database\Seeders\AuthorSeeder;
+use Database\Seeders\PublisherSeeder;
+use Database\Seeders\ReviewSeeder;
+use Database\Seeders\ReservationSeeder;
+use Database\Seeders\RoleSeeder;
+use Spatie\Permission\Models\Role;
+
+Role::create(['name' => 'admin']);
+Role::create(['name' => 'employee']);
+Role::create(['name' => 'client']);
 
 class DatabaseSeeder extends Seeder
 {
     public function run()
     {
-        Book::factory(1000)->create();
-        Member::factory(1000)->create();
-        Borrow::factory(1000)->create();
-        BookBorrow::factory(1000)->create();
+        $this->call([
+            BookSeeder::class,
+            MemberSeeder::class,
+            BorrowSeeder::class,
+            BookBorrowSeeder::class,
+            CategorySeeder::class,
+            AuthorSeeder::class,
+            PublisherSeeder::class,
+            ReviewSeeder::class,
+            ReservationSeeder::class,
+            RoleSeeder::class,      
+
+        ]);
     }
 }
 
