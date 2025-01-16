@@ -12,7 +12,6 @@ class Kernel extends HttpKernel
      * Middleware te są uruchamiane podczas każdego żądania do aplikacji.
      */
     protected $middleware = [
-        // Middleware dotyczące obsługi błędów, ciasteczek itp.
         \App\Http\Middleware\TrustHosts::class,
         \App\Http\Middleware\TrustProxies::class,
         \Illuminate\Http\Middleware\HandleCors::class,
@@ -56,6 +55,7 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'role' => \App\Http\Middleware\RoleMiddleware::class, // Dodane middleware dla ról
+        // Kluczowe: Ścieżka do middleware od Spatie
+        'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
     ];
 }
