@@ -1,24 +1,48 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\MemberController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ClientController;
-use App\Http\Controllers\EmployeeController;
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
-    Route::get('/admin/manage-books', [AdminController::class, 'manageBooks'])->name('admin.manage.books');
-    Route::get('/admin/manage-members', [AdminController::class, 'manageMembers'])->name('admin.manage.members');
+// Strona główna
+Route::get('/', function () {
+    return view('layouts.app');
 });
 
-Route::middleware(['auth', 'role:client'])->group(function () {
-    Route::get('/client', [ClientController::class, 'index'])->name('client.dashboard');
-    Route::get('/client/borrow-books', [ClientController::class, 'borrowBooks'])->name('client.borrow.books');
-    Route::get('/client/my-reservations', [ClientController::class, 'myReservations'])->name('client.my.reservations');
+// Dashboard dostępny tylko dla zalogowanych i zweryfikowanych użytkowników
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+
+// Trasy wymagające autoryzacji
+Route::middleware('auth')->group(function () {
+
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Zarządzanie książkami (tylko dla administratorów i pracowników)
+    Route::middleware('role:admin,staff')->group(function () {
+        Route::resource('books', BookController::class);
+    });
+
+    // Zarządzanie członkami (tylko dla administratorów)
+    Route::middleware('role:admin')->group(function () {
+        Route::resource('members', MemberController::class);
+    });
+
+    // Zarządzanie kategoriami (tylko dla administratorów)
+    Route::middleware('role:admin')->group(function () {
+        Route::resource('categories', CategoryController::class);
+    });
+
+    // Dodatkowe trasy np. recenzje, rezerwacje
+    // Możesz je dodać w podobny sposób.
 });
 
-Route::middleware(['auth', 'role:employee'])->group(function () {
-    Route::get('/employee', [EmployeeController::class, 'index'])->name('employee.dashboard');
-    Route::get('/employee/manage-borrows', [EmployeeController::class, 'manageBorrows'])->name('employee.manage.borrows');
-    Route::post('/employee/approve-reservation/{id}', [EmployeeController::class, 'approveReservation'])->name('employee.approve.reservation');
-});
+// Pliki autoryzacyjne (np. logowanie, rejestracja)
+require __DIR__.'/auth.php';
